@@ -1,9 +1,6 @@
 close all
 clear all
-% the directory and files will be saved based on the image name
-% Thus we just change the sequence / image name and the whole analysis is
-% done for that particular sequence
-imageName = 'caltrain';
+
 mbSize = 16;
 p = 7;
 for i = 0:30
