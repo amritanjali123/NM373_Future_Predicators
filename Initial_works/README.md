@@ -10,3 +10,5 @@ MATLAB
  
 # OUTPUT-
  The program will produce next frame of image sequence and MSE between predicted and actual image.
+ 
+ It also produces the flow vectors pictorially during image sequence movements.
