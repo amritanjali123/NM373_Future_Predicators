@@ -8,7 +8,7 @@
 % Ouput
 %   psnr : The motion compensated image's PSNR
 %
-% Written by Aroh Barjatya
+
 function psnr = imgPSNR(imgP, imgComp, n)
 [row col] = size(imgP);
 err = 0;
