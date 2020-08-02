@@ -6,8 +6,7 @@
 % Output
 %   dx : the motion vector component in columns
 %   dy : the motion vector component in rows
-%
-% Written by Aroh Barjatya
+
 function [dx, dy, min] = minCost(costs)
 [row, col] = size(costs);
 % we check whether the current
