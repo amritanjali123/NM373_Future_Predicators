@@ -1,9 +1,4 @@
-% Computes motion vectors using Four Step Search method
-%
-% Based on the paper by Lai-Man Po, and Wing-Chung Ma
-% IEEE Trans. on Circuits and Systems for Video Technology
-% Volume 6, Number 3, June 1996 :  Pages 313:317
-%
+
 % Input
 %   imgP : The image for which we want to find motion vectors
 %   imgI : The reference image
@@ -14,7 +9,6 @@
 %   motionVect : the motion vectors for each integral macroblock in imgP
 %   SS4computations: The average number of points searched for a macroblock
 %
-% Written by Aroh Barjatya
 function [motionVect, SS4Computations] = motionEst4SS(imgP, imgI, mbSize, p)
 [row col] = size(imgI);
 vectors = zeros(2,round(row*col/mbSize^2));
