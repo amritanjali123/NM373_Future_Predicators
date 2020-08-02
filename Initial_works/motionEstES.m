@@ -10,7 +10,7 @@
 %   motionVect : the motion vectors for each integral macroblock in imgP
 %   EScomputations: The average number of points searched for a macroblock
 %
-% Written by Aroh Barjatya
+
 function [motionVect, EScomputations] = motionEstES(imgP, imgI, mbSize, p)
 [row col] = size(imgI);
 vectors = zeros(2,ceil(row*col/mbSize^2));
