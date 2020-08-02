@@ -7,8 +7,7 @@
 %
 % Ouput
 %   imgComp : The motion compensated image
-%
-% Written by Aroh Barjatya
+
 function imgComp = motionComp(imgI, motionVect, mbSize)
 [row col] = size(imgI);
 % we start off from the top left of the image
