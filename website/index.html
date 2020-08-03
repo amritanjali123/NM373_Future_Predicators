@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+      integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Drive API Quickstart</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <p>Hackathon 2020</p>
+
+    <!--Add buttons to initiate auth sequence and sign out-->
+    <button id="authorize_button" style="display: none;">Authorize</button>
+    <button id="signout_button" style="display: none;">Sign Out</button>
+    <pre id="content" style="white-space: pre-wrap;"></pre>
+
+    <div id="main">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            SIH-2020
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">
+                  Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  About
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <section>
+        <div class="container">
+          <div class="row gx-5 gy-5" id="row"></div>
+        </div>
+      </section>
+      <section>
+        <div class="container">
+          <div class="row gx-5 gy-5" id="row-res"></div>
+        </div>
+      </section>
+      <section>
+        <div class="container">
+          <h1>Mean Square Error <span>0.56</span></h1>
+        </div>
+      </section>
+    </div>
+
+    <script type="text/javascript">
+      // Client ID and API key from the Developer Console
+      var CLIENT_ID =
+        "213878148327-3sndofu05bntb9m0qh3kioa3a5vghrdb.apps.googleusercontent.com";
+      var API_KEY = "AIzaSyCWm75mcCpOcsARjw02Sae1jAm1ACAvrYA";
+
+      // Array of API discovery doc URLs for APIs used by the quickstart
+      var DISCOVERY_DOCS = [
+        "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+      ];
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+      var SCOPES = "https://www.googleapis.com/auth/drive.metadata.readonly";
+
+      var authorizeButton = document.getElementById("authorize_button");
+      var signoutButton = document.getElementById("signout_button");
+
+      /**
+       *  On load, called to load the auth2 library and API client library.
+       */
+      function handleClientLoad() {
+        gapi.load("client:auth2", initClient);
+      }
+
+      /**
+       *  Initializes the API client library and sets up sign-in state
+       *  listeners.
+       */
+      function initClient() {
+        gapi.client
+          .init({
+            apiKey: API_KEY,
+            clientId: CLIENT_ID,
+            discoveryDocs: DISCOVERY_DOCS,
+            scope: SCOPES,
+          })
+          .then(
+            function () {
+              // Listen for sign-in state changes.
+              gapi.auth2
+                .getAuthInstance()
+                .isSignedIn.listen(updateSigninStatus);
+
+              // Handle the initial sign-in state.
+              updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+              authorizeButton.onclick = handleAuthClick;
+              signoutButton.onclick = handleSignoutClick;
+            },
+            function (error) {
+              appendPre(JSON.stringify(error, null, 2));
+            }
+          );
+      }
+
+      /**
+       *  Called when the signed in status changes, to update the UI
+       *  appropriately. After a sign-in, the API is called.
+       */
+      function updateSigninStatus(isSignedIn) {
+        if (isSignedIn) {
+          authorizeButton.style.display = "none";
+          signoutButton.style.display = "block";
+          listFiles();
+        } else {
+          authorizeButton.style.display = "block";
+          signoutButton.style.display = "none";
+        }
+      }
+
+      /**
+       *  Sign in the user upon button click.
+       */
+      function handleAuthClick(event) {
+        gapi.auth2.getAuthInstance().signIn();
+      }
+
+      /**
+       *  Sign out the user upon button click.
+       */
+      function handleSignoutClick(event) {
+        gapi.auth2.getAuthInstance().signOut();
+      }
+
+      /**
+       * Append a pre element to the body containing the given message
+       * as its text node. Used to display the results of the API call.
+       *
+       * @param {string} message Text to be placed in pre element.
+       */
+      function appendPre(message) {
+        var row = document.getElementById("row");
+        var div = document.createElement("div");
+        div.className = "col-lg-4 col-xs-12";
+        var img = document.createElement("img");
+        img.src = message;
+        div.append(img);
+        row.append(div);
+      }
+
+      function appendRes(message) {
+        var row = document.getElementById("row-res");
+        var div = document.createElement("div");
+        div.className = "col-lg-4 col-xs-12";
+        var img = document.createElement("img");
+        var caption = document.createElement("figcaption");
+        caption.innerHTML = "Result";
+        div.append(caption)
+        img.id = "image";
+        img.src = message;
+        div.appendChild(img);
+        row.append(div);
+      }
+
+      /**
+       * Print files.
+       */
+      function listFiles() {
+        gapi.client.drive.files
+          .list({
+            pageSize: 10,
+            fields: "nextPageToken, files(id, name)",
+          })
+          .then(function (response) {
+            var files = response.result.files;
+            if (files && files.length > 0) {
+              for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                if (
+                  (file.name != "result.png" ||
+                    file.name != "result.jpg" ||
+                    file.name != "result.jpeg") &&
+                  (file.name.substring(file.name.lastIndexOf(".") + 1) ==
+                    "jpg" ||
+                    (file.name.substring(file.name.lastIndexOf(".") + 1) ==
+                      "jpeg") |
+                      (file.name.substring(file.name.lastIndexOf(".") + 1) ==
+                        "png"))
+                ) {
+                  appendPre(
+                    `https://drive.google.com/uc?export=download&id=${file.id}`
+                  );
+                }
+                if (
+                  (file.name == "result.png" ||
+                    file.name == "result.jpg" ||
+                    file.name == "result.jpeg") &&
+                  (file.name.substring(file.name.lastIndexOf(".") + 1) ==
+                    "jpg" ||
+                    (file.name.substring(file.name.lastIndexOf(".") + 1) ==
+                      "jpeg") |
+                      (file.name.substring(file.name.lastIndexOf(".") + 1) ==
+                        "png"))
+                ) {
+                  appendRes(
+                    `https://drive.google.com/uc?export=download&id=${file.id}`
+                  );
+                }
+              }
+            } else {
+              document.write("No file found in drive");
+            }
+          });
+      }
+    </script>
+
+    <script
+      async
+      defer
+      src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+      integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
+<!-- [END drive_quickstart] -->
