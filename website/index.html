@@ -62,11 +62,6 @@
           <div class="row gx-5 gy-5" id="row-res"></div>
         </div>
       </section>
-      <section>
-        <div class="container">
-          <h1>Mean Square Error <span>0.56</span></h1>
-        </div>
-      </section>
     </div>
 
     <script type="text/javascript">
@@ -176,7 +171,7 @@
         var img = document.createElement("img");
         var caption = document.createElement("figcaption");
         caption.innerHTML = "Result";
-        div.append(caption)
+        div.append(caption);
         img.id = "image";
         img.src = message;
         div.appendChild(img);
@@ -197,6 +192,7 @@
             if (files && files.length > 0) {
               for (var i = 0; i < files.length; i++) {
                 var file = files[i];
+                console.log(file);
                 if (
                   (file.name != "result.png" ||
                     file.name != "result.jpg" ||
